@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Tính Tiền Phòng Trọ</title>
+    <style>
+        :root {
+            --primary: #0068ff;
+            --primary-hover: #0054cc;
+            --success: #28a745;
+            --success-hover: #218838;
+            --bg: #f4f7f6;
+            --text: #333;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text);
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+        }
+        .container { 
+            background: #fff; 
+            padding: 24px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08); 
+            max-width: 480px; 
+            width: 100%; 
+        }
+        h2 { text-align: center; margin-top: 0; color: #111; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #d1d5db; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        input:focus { outline: none; border-color: var(--primary); }
+        button { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 12px 16px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 600;
+            width: 100%; 
+            transition: background 0.2s;
+        }
+        button:hover { background: var(--primary-hover); }
+        .result-box { margin-top: 24px; }
+        textarea { 
+            width: 100%; 
+            height: 240px; 
+            padding: 12px; 
+            border: 1px solid #d1d5db; 
+            border-radius: 6px; 
+            resize: none; 
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; 
+            font-size: 14px;
+            box-sizing: border-box; 
+            background-color: #f8f9fa;
+            line-height: 1.5;
+        }
+        .copy-btn { background: var(--success); margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .copy-btn:hover { background: var(--success-hover); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Tiền Phòng Trọ</h2>
+        
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Phòng số:</label>
+                <input type="text" id="room" value="001">
+            </div>
+            <div class="form-group">
+                <label>Tháng/Năm:</label>
+                <input type="text" id="monthYear" placeholder="VD: 08/2026">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Tiền nhà (VNĐ):</label>
+            <input type="number" id="rent" value="4000000">
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Số điện cũ:</label>
+                <input type="number" id="elecOld" placeholder="Ví dụ: 13773">
+            </div>
+            <div class="form-group">
+                <label>Số điện mới:</label>
+                <input type="number" id="elecNew" placeholder="Ví dụ: 13984">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Đơn giá điện (VNĐ/kWh):</label>
+            <input type="number" id="elecPrice" value="3000">
+        </div>
+
+        <!-- Thêm trường Lời nhắn tùy chỉnh -->
+        <div class="form-group">
+            <label>Lời nhắn cuối bill:</label>
+            <input type="text" id="customNote" value="(Vui lòng thanh toán trước ngày 10 tây hàng tháng. Cảm ơn nhé!)">
+        </div>
+
+        <button onclick="generateBill()">Tạo Hóa Đơn</button>
+
+        <div class="result-box">
+            <textarea id="output" readonly></textarea>
+            <button class="copy-btn" onclick="copyText()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                Copy gửi Zalo
+            </button>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            document.getElementById('monthYear').value = `${month}/${year}`;
+        };
+
+        function formatCurrency(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function generateBill() {
+            const room = document.getElementById('room').value || "001";
+            const monthYear = document.getElementById('monthYear').value || "08/2026";
+            const rent = parseInt(document.getElementById('rent').value) || 0;
+            const elecOld = parseInt(document.getElementById('elecOld').value) || 0;
+            const elecNew = parseInt(document.getElementById('elecNew').value) || 0;
+            const elecPrice = parseInt(document.getElementById('elecPrice').value) || 0;
+            // Lấy nội dung từ ô lời nhắn
+            const customNote = document.getElementById('customNote').value || "";
+
+            const elecUsed = elecNew - elecOld;
+            const elecCost = elecUsed * elecPrice;
+            const total = rent + elecCost;
+
+            const template = `🧾 HÓA ĐƠN TIỀN NHÀ THÁNG ${monthYear}
+🏠 Phòng: ${room}
+------------------------
+▪️ Tiền nhà: ${formatCurrency(rent)} đ
+▪️ Điện: ${formatCurrency(elecCost)} đ
+   (Mới: ${elecNew} - Cũ: ${elecOld} = ${elecUsed} kWh x ${formatCurrency(elecPrice)}đ)
+------------------------
+💰 TỔNG CỘNG: ${formatCurrency(total)} VNĐ
+
+${customNote}`;
+
+            document.getElementById('output').value = template;
+        }
+
+        async function copyText() {
+            const outputText = document.getElementById('output').value;
+            if (!outputText) {
+                alert("Vui lòng tạo hóa đơn trước khi copy!");
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(outputText);
+                
+                const btn = document.querySelector('.copy-btn');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '✅ Đã Copy Thành Công!';
+                btn.style.background = '#1e7e34';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.style.background = 'var(--success)';
+                }, 2000);
+            } catch (err) {
+                const outputArea = document.getElementById('output');
+                outputArea.select();
+                document.execCommand('copy');
+                alert("Đã copy thành công!");
+            }
+        }
+    </script>
+</body>
+</html>
