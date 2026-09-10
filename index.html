@@ -3,123 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tool Tính Tiền Phòng Trọ</title>
+    <title>Tool Tính Tiền Phòng Trọ Pro</title>
     <style>
         :root {
             --primary: #0068ff;
             --primary-hover: #0054cc;
             --success: #28a745;
             --success-hover: #218838;
-            --bg: #f4f7f6;
-            --text: #333;
+            --bg: #eef2f7;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #cbd5e1;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
             background-color: var(--bg); 
             color: var(--text);
-            padding: 20px; 
+            padding: 16px; 
             display: flex; 
             justify-content: center; 
+            min-height: 100vh;
         }
+
         .container { 
-            background: #fff; 
+            background: var(--card-bg); 
             padding: 24px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 16px rgba(0,0,0,0.08); 
-            max-width: 480px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06); 
+            max-width: 520px; 
             width: 100%; 
         }
-        h2 { text-align: center; margin-top: 0; color: #111; }
+
+        h2 { 
+            text-align: center; 
+            color: #0f172a; 
+            font-size: 22px; 
+            margin-bottom: 20px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .section-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
-        input { 
+        .form-group { margin-bottom: 12px; }
+        .form-group:last-child { margin-bottom: 0; }
+
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 13px; color: #475569; }
+
+        input, select { 
             width: 100%; 
-            padding: 10px; 
-            border: 1px solid #d1d5db; 
-            border-radius: 6px; 
-            box-sizing: border-box; 
-            font-size: 16px;
-            transition: border-color 0.2s;
+            padding: 10px 12px; 
+            border: 1px solid var(--border); 
+            border-radius: 8px; 
+            font-size: 15px;
+            transition: all 0.2s;
+            background: #fff;
         }
-        input:focus { outline: none; border-color: var(--primary); }
-        button { 
+
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,104,255,0.15); }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+            user-select: none;
+        }
+
+        .toggle-switch input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .meter-block {
+            background: #fff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .meter-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0068ff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .meter-label.water { color: #06b6d4; }
+
+        .hidden { display: none !important; }
+
+        button.btn-calc { 
             background: var(--primary); 
             color: white; 
             border: none; 
-            padding: 12px 16px; 
-            border-radius: 6px; 
+            padding: 14px; 
+            border-radius: 10px; 
             cursor: pointer; 
             font-size: 16px; 
-            font-weight: 600;
+            font-weight: 700;
             width: 100%; 
             transition: background 0.2s;
+            box-shadow: 0 4px 12px rgba(0,104,255,0.25);
         }
-        button:hover { background: var(--primary-hover); }
-        .result-box { margin-top: 24px; }
+        button.btn-calc:hover { background: var(--primary-hover); }
+
+        .result-box { margin-top: 20px; }
+        
         textarea { 
             width: 100%; 
-            height: 240px; 
-            padding: 12px; 
-            border: 1px solid #d1d5db; 
-            border-radius: 6px; 
+            height: 270px; 
+            padding: 14px; 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
             resize: none; 
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; 
+            font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; 
             font-size: 14px;
-            box-sizing: border-box; 
-            background-color: #f8f9fa;
+            background-color: #f1f5f9;
             line-height: 1.5;
+            color: #0f172a;
         }
-        .copy-btn { background: var(--success); margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+
+        .copy-btn { 
+            background: var(--success); 
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            width: 100%;
+            margin-top: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+            transition: background 0.2s;
+        }
         .copy-btn:hover { background: var(--success-hover); }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Tiền Phòng Trọ</h2>
+        <h2>🏠 Tính Tiền Phòng Trọ</h2>
         
-        <div class="grid-2">
-            <div class="form-group">
-                <label>Phòng số:</label>
-                <input type="text" id="room" value="001">
+        <!-- THÔNG TIN PHÒNG & TIỀN NHÀ -->
+        <div class="section-box">
+            <div class="section-title">📌 Thông tin cơ bản</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Phòng số:</label>
+                    <input type="text" id="room" value="001" placeholder="001">
+                </div>
+                <div class="form-group">
+                    <label>Tháng/Năm:</label>
+                    <input type="text" id="monthYear" placeholder="VD: 09/2026">
+                </div>
             </div>
             <div class="form-group">
-                <label>Tháng/Năm:</label>
-                <input type="text" id="monthYear" placeholder="VD: 08/2026">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Tiền nhà (VNĐ):</label>
-            <input type="number" id="rent" value="4000000">
-        </div>
-
-        <div class="grid-2">
-            <div class="form-group">
-                <label>Số điện cũ:</label>
-                <input type="number" id="elecOld" placeholder="Ví dụ: 13773">
-            </div>
-            <div class="form-group">
-                <label>Số điện mới:</label>
-                <input type="number" id="elecNew" placeholder="Ví dụ: 13984">
+                <label>Tiền nhà (VNĐ):</label>
+                <input type="number" id="rent" value="4000000" placeholder="4000000">
             </div>
         </div>
 
-        <div class="form-group">
-            <label>Đơn giá điện (VNĐ/kWh):</label>
-            <input type="number" id="elecPrice" value="3000">
+        <!-- ĐIỆN -->
+        <div class="section-box">
+            <div class="section-title">
+                <span>⚡ Tiền Điện</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="has2Elec" onchange="toggleMeters()">
+                    <span>Phòng có 2 đồng hồ điện</span>
+                </label>
+            </div>
+
+            <!-- ĐH Điện 1 -->
+            <div class="meter-block">
+                <div class="meter-label" id="labelElec1">Đồng hồ điện</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Số điện cũ:</label>
+                        <input type="number" id="elecOld1" placeholder="Ví dụ: 13773">
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện mới:</label>
+                        <input type="number" id="elecNew1" placeholder="Ví dụ: 13984">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ĐH Điện 2 (mặc định ẩn) -->
+            <div class="meter-block hidden" id="elec2Block">
+                <div class="meter-label">Đồng hồ điện 2</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Số điện cũ (ĐH 2):</label>
+                        <input type="number" id="elecOld2" placeholder="Ví dụ: 5331">
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện mới (ĐH 2):</label>
+                        <input type="number" id="elecNew2" placeholder="Ví dụ: 5420">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 12px;">
+                <label>Đơn giá điện (VNĐ/kWh):</label>
+                <input type="number" id="elecPrice" value="3500" placeholder="3500">
+            </div>
         </div>
 
-        <!-- Thêm trường Lời nhắn tùy chỉnh -->
-        <div class="form-group">
-            <label>Lời nhắn cuối bill:</label>
-            <input type="text" id="customNote" value="(Vui lòng thanh toán trước ngày 10 tây hàng tháng. Cảm ơn nhé!)">
+        <!-- NƯỚC -->
+        <div class="section-box">
+            <div class="section-title">
+                <span>💧 Tiền Nước</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="has2Water" onchange="toggleMeters()">
+                    <span>Phòng có 2 đồng hồ nước</span>
+                </label>
+            </div>
+
+            <!-- ĐH Nước 1 -->
+            <div class="meter-block">
+                <div class="meter-label water" id="labelWater1">Đồng hồ nước</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Số nước cũ:</label>
+                        <input type="number" id="waterOld1" placeholder="Ví dụ: 235">
+                    </div>
+                    <div class="form-group">
+                        <label>Số nước mới:</label>
+                        <input type="number" id="waterNew1" placeholder="Ví dụ: 245">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ĐH Nước 2 (mặc định ẩn) -->
+            <div class="meter-block hidden" id="water2Block">
+                <div class="meter-label water">Đồng hồ nước 2</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Số nước cũ (ĐH 2):</label>
+                        <input type="number" id="waterOld2" placeholder="Ví dụ: 105">
+                    </div>
+                    <div class="form-group">
+                        <label>Số nước mới (ĐH 2):</label>
+                        <input type="number" id="waterNew2" placeholder="Ví dụ: 110">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 12px;">
+                <label>Đơn giá nước (VNĐ/m³):</label>
+                <input type="number" id="waterPrice" value="12000" placeholder="12000">
+            </div>
         </div>
 
-        <button onclick="generateBill()">Tạo Hóa Đơn</button>
+        <!-- PHÍ KHÁC & GHI CHÚ -->
+        <div class="section-box">
+            <div class="section-title">📋 Phí dịch vụ khác & Ghi chú</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Tiền Rác / Wifi / Khác (VNĐ):</label>
+                    <input type="number" id="otherFee" value="0" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Tên phí khác (nếu có):</label>
+                    <input type="text" id="otherFeeName" value="Internet + Rác" placeholder="VD: Wifi, Rác">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Lời nhắn cuối bill:</label>
+                <input type="text" id="customNote" value="(Vui lòng thanh toán trước ngày 10 tây hàng tháng. Cảm ơn nhé!)">
+            </div>
+        </div>
+
+        <button class="btn-calc" onclick="generateBill()">🧾 TẠO HÓA ĐƠN</button>
 
         <div class="result-box">
-            <textarea id="output" readonly></textarea>
+            <textarea id="output" readonly placeholder="Hóa đơn sẽ xuất hiện ở đây..."></textarea>
             <button class="copy-btn" onclick="copyText()">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                 Copy gửi Zalo
@@ -133,44 +328,141 @@
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const year = now.getFullYear();
             document.getElementById('monthYear').value = `${month}/${year}`;
+            
+            // Load saved settings if any
+            loadSavedConfig();
         };
 
+        function toggleMeters() {
+            const has2Elec = document.getElementById('has2Elec').checked;
+            const elec2Block = document.getElementById('elec2Block');
+            const labelElec1 = document.getElementById('labelElec1');
+
+            if (has2Elec) {
+                elec2Block.classList.remove('hidden');
+                labelElec1.innerText = "Đồng hồ điện 1";
+            } else {
+                elec2Block.classList.add('hidden');
+                labelElec1.innerText = "Đồng hồ điện";
+            }
+
+            const has2Water = document.getElementById('has2Water').checked;
+            const water2Block = document.getElementById('water2Block');
+            const labelWater1 = document.getElementById('labelWater1');
+
+            if (has2Water) {
+                water2Block.classList.remove('hidden');
+                labelWater1.innerText = "Đồng hồ nước 1";
+            } else {
+                water2Block.classList.add('hidden');
+                labelWater1.innerText = "Đồng hồ nước";
+            }
+
+            saveConfig();
+        }
+
         function formatCurrency(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            return (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
         function generateBill() {
-            const room = document.getElementById('room').value || "001";
-            const monthYear = document.getElementById('monthYear').value || "08/2026";
+            const room = document.getElementById('room').value.trim() || "001";
+            const monthYear = document.getElementById('monthYear').value.trim() || "";
             const rent = parseInt(document.getElementById('rent').value) || 0;
-            const elecOld = parseInt(document.getElementById('elecOld').value) || 0;
-            const elecNew = parseInt(document.getElementById('elecNew').value) || 0;
-            const elecPrice = parseInt(document.getElementById('elecPrice').value) || 0;
-            // Lấy nội dung từ ô lời nhắn
-            const customNote = document.getElementById('customNote').value || "";
+            
+            // Điện 1
+            const elecOld1 = parseInt(document.getElementById('elecOld1').value) || 0;
+            const elecNew1 = parseInt(document.getElementById('elecNew1').value) || 0;
+            const elecUsed1 = Math.max(0, elecNew1 - elecOld1);
+            
+            // Điện 2
+            const has2Elec = document.getElementById('has2Elec').checked;
+            const elecOld2 = parseInt(document.getElementById('elecOld2').value) || 0;
+            const elecNew2 = parseInt(document.getElementById('elecNew2').value) || 0;
+            const elecUsed2 = has2Elec ? Math.max(0, elecNew2 - elecOld2) : 0;
 
-            const elecUsed = elecNew - elecOld;
-            const elecCost = elecUsed * elecPrice;
-            const total = rent + elecCost;
+            const totalElecUsed = elecUsed1 + elecUsed2;
+            const elecPrice = parseInt(document.getElementById('elecPrice').value) || 0;
+            const elecCost = totalElecUsed * elecPrice;
+
+            // Nước 1
+            const waterOld1 = parseInt(document.getElementById('waterOld1').value) || 0;
+            const waterNew1 = parseInt(document.getElementById('waterNew1').value) || 0;
+            const waterUsed1 = Math.max(0, waterNew1 - waterOld1);
+
+            // Nước 2
+            const has2Water = document.getElementById('has2Water').checked;
+            const waterOld2 = parseInt(document.getElementById('waterOld2').value) || 0;
+            const waterNew2 = parseInt(document.getElementById('waterNew2').value) || 0;
+            const waterUsed2 = has2Water ? Math.max(0, waterNew2 - waterOld2) : 0;
+
+            const totalWaterUsed = waterUsed1 + waterUsed2;
+            const waterPrice = parseInt(document.getElementById('waterPrice').value) || 0;
+            const waterCost = totalWaterUsed * waterPrice;
+
+            // Phí khác
+            const otherFee = parseInt(document.getElementById('otherFee').value) || 0;
+            const otherFeeName = document.getElementById('otherFeeName').value.trim() || "Phí dịch vụ";
+
+            // Lời nhắn
+            const customNote = document.getElementById('customNote').value.trim() || "";
+
+            // Tổng cộng
+            const total = rent + elecCost + waterCost + otherFee;
+
+            // Chi tiết Điện
+            let elecDetail = "";
+            if (has2Elec) {
+                const cost1 = elecUsed1 * elecPrice;
+                const cost2 = elecUsed2 * elecPrice;
+                elecDetail = `⚡ Điện: ${formatCurrency(elecCost)} đ
+   + ĐH1: ${elecNew1} - ${elecOld1} = ${elecUsed1} kWh (${formatCurrency(cost1)}đ)
+   + ĐH2: ${elecNew2} - ${elecOld2} = ${elecUsed2} kWh (${formatCurrency(cost2)}đ)
+   => Tổng điện: ${totalElecUsed} kWh x ${formatCurrency(elecPrice)}đ`;
+            } else {
+                elecDetail = `⚡ Điện: ${formatCurrency(elecCost)} đ
+   (Số mới: ${elecNew1} - Số cũ: ${elecOld1} = ${elecUsed1} kWh x ${formatCurrency(elecPrice)}đ)`;
+            }
+
+            // Chi tiết Nước
+            let waterDetail = "";
+            if (has2Water) {
+                const wCost1 = waterUsed1 * waterPrice;
+                const wCost2 = waterUsed2 * waterPrice;
+                waterDetail = `💧 Nước: ${formatCurrency(waterCost)} đ
+   + ĐH1: ${waterNew1} - ${waterOld1} = ${waterUsed1} m³ (${formatCurrency(wCost1)}đ)
+   + ĐH2: ${waterNew2} - ${waterOld2} = ${waterUsed2} m³ (${formatCurrency(wCost2)}đ)
+   => Tổng nước: ${totalWaterUsed} m³ x ${formatCurrency(waterPrice)}đ`;
+            } else {
+                waterDetail = `💧 Nước: ${formatCurrency(waterCost)} đ
+   (Số mới: ${waterNew1} - Số cũ: ${waterOld1} = ${waterUsed1} m³ x ${formatCurrency(waterPrice)}đ)`;
+            }
+
+            // Phí khác nếu > 0
+            let otherFeeText = "";
+            if (otherFee > 0) {
+                otherFeeText = `\n▪️ ${otherFeeName}: ${formatCurrency(otherFee)} đ`;
+            }
 
             const template = `🧾 HÓA ĐƠN TIỀN NHÀ THÁNG ${monthYear}
 🏠 Phòng: ${room}
-------------------------
+----------------------------------
 ▪️ Tiền nhà: ${formatCurrency(rent)} đ
-▪️ Điện: ${formatCurrency(elecCost)} đ
-   (Mới: ${elecNew} - Cũ: ${elecOld} = ${elecUsed} kWh x ${formatCurrency(elecPrice)}đ)
-------------------------
+▪️ ${elecDetail}
+▪️ ${waterDetail}${otherFeeText}
+----------------------------------
 💰 TỔNG CỘNG: ${formatCurrency(total)} VNĐ
 
 ${customNote}`;
 
             document.getElementById('output').value = template;
+            saveConfig();
         }
 
         async function copyText() {
             const outputText = document.getElementById('output').value;
             if (!outputText) {
-                alert("Vui lòng tạo hóa đơn trước khi copy!");
+                alert("Vui lòng nhấn nút 'TẠO HÓA ĐƠN' trước khi copy!");
                 return;
             }
             
@@ -192,6 +484,34 @@ ${customNote}`;
                 document.execCommand('copy');
                 alert("Đã copy thành công!");
             }
+        }
+
+        function saveConfig() {
+            const config = {
+                has2Elec: document.getElementById('has2Elec').checked,
+                has2Water: document.getElementById('has2Water').checked,
+                elecPrice: document.getElementById('elecPrice').value,
+                waterPrice: document.getElementById('waterPrice').value,
+                customNote: document.getElementById('customNote').value,
+                otherFeeName: document.getElementById('otherFeeName').value
+            };
+            localStorage.setItem('rent_calc_config', JSON.stringify(config));
+        }
+
+        function loadSavedConfig() {
+            try {
+                const saved = localStorage.getItem('rent_calc_config');
+                if (saved) {
+                    const config = JSON.parse(saved);
+                    if (config.has2Elec !== undefined) document.getElementById('has2Elec').checked = config.has2Elec;
+                    if (config.has2Water !== undefined) document.getElementById('has2Water').checked = config.has2Water;
+                    if (config.elecPrice) document.getElementById('elecPrice').value = config.elecPrice;
+                    if (config.waterPrice) document.getElementById('waterPrice').value = config.waterPrice;
+                    if (config.customNote) document.getElementById('customNote').value = config.customNote;
+                    if (config.otherFeeName) document.getElementById('otherFeeName').value = config.otherFeeName;
+                    toggleMeters();
+                }
+            } catch(e) {}
         }
     </script>
 </body>
